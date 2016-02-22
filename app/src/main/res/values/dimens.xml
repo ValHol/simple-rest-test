@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<dimen name="list_item_height">72dp</dimen>
+    <dimen name="full_image">150dp</dimen>
+    <dimen name="iconsize">32dp</dimen>
+    <dimen name="mainpadding">16dp</dimen>
+</resources>

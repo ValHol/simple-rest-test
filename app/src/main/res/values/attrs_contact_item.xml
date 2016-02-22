@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="ContactItem">
+        <attr name="contactPicture" format="color|reference"/>
+        <attr name="contactName" format="string"/>
+        <attr name="contactPhone" format="string"/>
+    </declare-styleable>
+</resources>
