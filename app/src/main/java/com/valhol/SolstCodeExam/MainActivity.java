@@ -11,8 +11,6 @@ import com.valhol.SolstCodeExam.events.ContactSelectedEvent;
 import com.valhol.SolstCodeExam.events.FinishedEvent;
 import com.valhol.SolstCodeExam.interfaces.ContactsDetailsService;
 import com.valhol.SolstCodeExam.interfaces.ContactsService;
-import com.valhol.SolstCodeExam.model.ContactDetailModel;
-import com.valhol.SolstCodeExam.model.ContactModel;
 import de.greenrobot.event.EventBus;
 import de.greenrobot.event.Subscribe;
 import retrofit2.Call;
@@ -79,101 +77,47 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void downloadContacts() {
-        mContactsService.contactsList().enqueue(new Callback<List<ContactModel>>() {
+        mContactsService.contactsList().enqueue(new Callback<List<Contact>>() {
             @Override
-            public void onResponse(Call<List<ContactModel>> call, Response<List<ContactModel>> response) {
+            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                 updateLocalDatabase(response.body());
             }
 
             @Override
-            public void onFailure(Call<List<ContactModel>> call, Throwable t) {
+            public void onFailure(Call<List<Contact>> call, Throwable t) {
                 Log.d("onFailure", t.getMessage());
             }
         });
     }
 
-    private void updateLocalDatabase(List<ContactModel> contactModelList) {
-        for (ContactModel contactModel : contactModelList) {
-            Contact contact = getContactFromModel(contactModel);
-            Phone phone = getPhoneFromModel(contactModel);
+    private void updateLocalDatabase(List<Contact> contactList) {
+        for (Contact contact : contactList) {
+            Log.d("Contact", contact.getCompany());
+            mContactDao.insertOrReplaceInTx(contact);
+            if (contact.getPhone() != null)
+                mPhoneDao.insertOrReplaceInTx(contact.getPhone());
 
-            mContactsDetailsService.contactsDetails(contact.getEmployeeId()).enqueue(new Callback<ContactDetailModel>() {
+            mContactsDetailsService.contactsDetails(contact.getEmployeeId()).enqueue(new Callback<ContactDetails>() {
                 @Override
-                public void onResponse(Call<ContactDetailModel> call, Response<ContactDetailModel> response) {
-                    ContactDetailModel contactDetailModel = response.body();
-                    ContactDetails contactDetails = getContactDetailsFromModel(contactDetailModel);
-                    Address address = getAddressFromModel(contactDetailModel);
-                    mAddressDao.insertOrReplace(address);
-                    contactDetails.setAddress(address);
+                public void onResponse(Call<ContactDetails> call, Response<ContactDetails> response) {
+                    ContactDetails contactDetails = response.body();
                     mContactDetailsDao.insertOrReplace(contactDetails);
+
+                    Address address = contactDetails.getAddress();
+                    if(address == null) return;
+                    mAddressDao.insertOrReplace(address);
                     address.setContactDetails(contactDetails);
                     mAddressDao.update(address);
                 }
 
                 @Override
-                public void onFailure(Call<ContactDetailModel> call, Throwable t) {
+                public void onFailure(Call<ContactDetails> call, Throwable t) {
 
                 }
             });
-
-            mPhoneDao.insertOrReplace(phone);
-            contact.setPhone(phone);
-            mContactDao.insertOrReplace(contact);
-            phone.setContact(contact);
-            mPhoneDao.update(phone);
         }
 
         EventBus.getDefault().post(new FinishedEvent());
-    }
-
-    private Address getAddressFromModel(ContactDetailModel contactDetailModel) {
-        return new Address(
-                null,
-                contactDetailModel.getAddress().getStreet(),
-                contactDetailModel.getAddress().getCity(),
-                contactDetailModel.getAddress().getState(),
-                contactDetailModel.getAddress().getCountry(),
-                contactDetailModel.getAddress().getZip(),
-                contactDetailModel.getAddress().getLatitude(),
-                contactDetailModel.getAddress().getLongitude(),
-                null
-        );
-    }
-
-    private ContactDetails getContactDetailsFromModel(ContactDetailModel contactDetailModel) {
-        return new ContactDetails(
-                null,
-                contactDetailModel.getEmployeeId(),
-                contactDetailModel.getFavorite(),
-                contactDetailModel.getLargeImageURL(),
-                contactDetailModel.getEmail(),
-                contactDetailModel.getWebsite(),
-                null
-        );
-    }
-
-    private Contact getContactFromModel(ContactModel contactModel) {
-        return new Contact(
-                null,
-                contactModel.getName(),
-                contactModel.getEmployeeId(),
-                contactModel.getCompany(),
-                contactModel.getDetailsURL(),
-                contactModel.getSmallImageURL(),
-                contactModel.getBirthdate(),
-                null,
-                null
-        );
-    }
-
-    private Phone getPhoneFromModel(ContactModel contactModel) {
-        return new Phone(
-                null,
-                contactModel.getPhone().getWork(),
-                contactModel.getPhone().getHome(),
-                contactModel.getPhone().getMobile(),
-                null
-        );
     }
 
     @Subscribe
