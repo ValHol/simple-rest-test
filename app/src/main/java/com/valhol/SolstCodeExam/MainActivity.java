@@ -122,17 +122,14 @@ public class MainActivity extends FragmentActivity {
 
     @Subscribe
     public void onContactSelected(ContactSelectedEvent contactSelectedEvent) {
-
         long employeeId = contactSelectedEvent.employeeId;
+        ContactDetailFragment fragment = getContactDetailFragment(employeeId);
 
         if (mTwoPane) {
-            ContactDetailFragment fragment = getContactDetailFragment(employeeId);
             getFragmentManager().beginTransaction()
                     .replace(R.id.contact_detail_container, fragment)
                     .commit();
-
         } else {
-            ContactDetailFragment fragment = getContactDetailFragment(employeeId);
             loadContentFragment(fragment);
         }
     }
