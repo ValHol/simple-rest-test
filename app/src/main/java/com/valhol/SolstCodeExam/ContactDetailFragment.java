@@ -121,18 +121,23 @@ public class ContactDetailFragment extends Fragment {
          */
         mContactName.setText(contact.getName());
         mContactCompany.setText(contact.getCompany());
-        mHomePhone.setText(phones.getHome());
-        mWorkPhone.setText(phones.getWork());
-        mMobilePhone.setText(phones.getMobile());
+        if (phones != null) {
+            if (mHomePhone != null) mHomePhone.setText(phones.getHome());
+            if (mWorkPhone != null) mWorkPhone.setText(phones.getWork());
+            if (mMobilePhone != null) mMobilePhone.setText(phones.getMobile());
+        }
         mBirthday.setText(contact.getBirthdate());
         mWebsite.setText(contactDetails.getWebsite());
         mEmail.setText(contactDetails.getEmail());
-        mContactStreet.setText(address.getStreet());
-        mContactCity.setText(address.getCity() +
-                ", " +
-                address.getState() +
-                " " +
-                address.getZip());
+
+        if(address != null) {
+            mContactStreet.setText(address.getStreet());
+            mContactCity.setText(address.getCity() +
+                    ", " +
+                    address.getState() +
+                    " " +
+                    address.getZip());
+        }
 
         /**
          * Load the picture with Picasso

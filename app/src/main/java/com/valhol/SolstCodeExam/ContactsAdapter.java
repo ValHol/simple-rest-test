@@ -49,7 +49,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
         public void bindContact(final Contact contact) {
             mContactItem.setContactName(contact.getName());
-            mContactItem.setPhoneNumber(contact.getPhone().getMobile());
+            if (contact.getPhone() != null)
+                mContactItem.setPhoneNumber(contact.getPhone().getMobile());
             mContactItem.setThumbnailUri(contact.getSmallImageURL());
             mContactItem.setOnClickListener(new View.OnClickListener() {
                 @Override

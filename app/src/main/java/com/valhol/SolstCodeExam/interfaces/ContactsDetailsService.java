@@ -1,13 +1,11 @@
 package com.valhol.SolstCodeExam.interfaces;
 
-import com.valhol.SolstCodeExam.model.ContactDetailModel;
+import com.valhol.SolstCodeExam.dao.ContactDetails;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-import java.util.List;
-
 public interface ContactsDetailsService {
     @GET("Contacts/id/{employeeid}.json")
-    Call<ContactDetailModel> contactsDetails(@Path("employeeid") long employeeId);
+    Call<ContactDetails> contactsDetails(@Path("employeeid") long employeeId);
 }
