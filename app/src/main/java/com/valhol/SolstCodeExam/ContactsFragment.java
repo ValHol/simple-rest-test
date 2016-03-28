@@ -2,12 +2,14 @@ package com.valhol.SolstCodeExam;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.valhol.SolstCodeExam.dao.Contact;
 import com.valhol.SolstCodeExam.dao.ContactDao;
 import com.valhol.SolstCodeExam.events.FinishedEvent;
@@ -53,20 +55,33 @@ public class ContactsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-        mContactsRecyclerView = (RecyclerView) view.findViewById(R.id.contacts_recycler);
-
         ((ContactsApplication) inflater.getContext().getApplicationContext()).getNetworkComponent().inject(this);
+        ButterKnife.bind(this, view);
 
-        mContactsRecyclerView.setLayoutManager(
+/*        mContactsRecyclerView.setLayoutManager(
                 new LinearLayoutManager(
                         inflater.getContext(),
                         LinearLayoutManager.VERTICAL,
+                        false
+                ));*/
+
+        mContactsRecyclerView.setLayoutManager(
+                new GridLayoutManager(
+                        inflater.getContext(),
+                        2,
+                        GridLayoutManager.VERTICAL,
                         false
                 ));
 
         setupList();
 
         return view;
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     private void setupList() {
@@ -84,9 +99,4 @@ public class ContactsFragment extends Fragment {
         setupList();
     }
 
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
 }
