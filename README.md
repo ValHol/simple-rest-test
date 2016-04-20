@@ -10,8 +10,3 @@
 * EventBus for easy communication between Activities and/or Fragments
 * Different layouts for tablets and phones
 * Views interaction for the favorite and back buttonss
-
-##Screenshots
-![Screenshots](https://raw.githubusercontent.com/ValHol/solstchallenge/master/SolsticeCodeChallenge1.png)
-![Screenshots](https://raw.githubusercontent.com/ValHol/solstchallenge/master/SolsticeCodeChallenge2.png)
-![Screenshots](https://raw.githubusercontent.com/ValHol/solstchallenge/master/SolsticeCodeChallenge3.png)
